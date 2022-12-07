@@ -3,6 +3,9 @@ package com.cringe.cringe3000.service;
 import com.cringe.cringe3000.model.dto.ChangePasswordRequest;
 import com.cringe.cringe3000.model.dto.LoginRequest;
 import com.cringe.cringe3000.model.dto.RegisterRequest;
+import com.cringe.cringe3000.model.entity.User;
+
+import java.util.Optional;
 
 public interface UserService {
 
@@ -15,5 +18,9 @@ public interface UserService {
   boolean forgotPassword(String email);
 
   void changePassword(ChangePasswordRequest changePasswordRequest, String token);
+
+  Optional<User> findByEmail(String email);
+
+  Optional<User> findByUsername(String username);
 
 }

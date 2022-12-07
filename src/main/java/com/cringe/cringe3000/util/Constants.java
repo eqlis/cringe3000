@@ -6,7 +6,9 @@ public class Constants {
   public static final String EXISTS = "exists";
   public static final String PATTERN = "pattern";
 
-  public static final String EMAIL_VALIDATION = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&’*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
+  public static final String EMAIL_VALIDATION = "^(?=.{1,64}@)[a-z0-9_-]+(\\.[a-z0-9_-]+)*@[^-][a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,})$";
+  public static final String USERNAME_VALIDATION = "^(?=.*[a-zA-Z])(?=.+[a-zA-Z0-9@._-]).{6,}$";
+  public static final String PASSWORD_VALIDATION = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8,20}$";
 
   public static final String REGISTRATION_CONFIRMATION = "Registration Confirmation";
   public static final String CHANGE_PASSWORD = "Change Password";
