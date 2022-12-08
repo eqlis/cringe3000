@@ -63,12 +63,9 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void activate(String token) {
-    Optional<VerificationToken> tokenOptional = verificationTokenService.findByToken(token)
-        .filter(vt -> vt.isNotExpired() && !vt.isVerified());
-    if (tokenOptional.isEmpty()) {
-      throw new EntityNotFoundException();
-    }
-    VerificationToken verificationToken = tokenOptional.get();
+    VerificationToken verificationToken = verificationTokenService.findByToken(token)
+        .filter(vt -> vt.isNotExpired() && !vt.isVerified())
+        .orElseThrow(EntityNotFoundException::new);
     User user = verificationToken.getUser();
     user.setEnabled(true);
     userRepository.save(user);
@@ -90,12 +87,9 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void changePassword(ChangePasswordRequest changePasswordRequest, String token) {
-    Optional<VerificationToken> tokenOptional = verificationTokenService.findByToken(token)
-        .filter(vt -> vt.isNotExpired() && !vt.isVerified());
-    if (tokenOptional.isEmpty()) {
-      throw new EntityNotFoundException();
-    }
-    VerificationToken verificationToken = tokenOptional.get();
+    VerificationToken verificationToken = verificationTokenService.findByToken(token)
+        .filter(vt -> vt.isNotExpired() && !vt.isVerified())
+        .orElseThrow(EntityNotFoundException::new);
     User user = verificationToken.getUser();
     if (encoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
       user.setPassword(encoder.encode(changePasswordRequest.getNewPassword()));
@@ -114,6 +108,21 @@ public class UserServiceImpl implements UserService {
   @Override
   public Optional<User> findByUsername(String username) {
     return userRepository.findByUsername(username);
+  }
+
+  @Override
+  public Optional<User> findByEmailOrUsername(String username) {
+    return userRepository.findByEmailOrUsername(username);
+  }
+
+  @Override
+  public void resetPassword(Long id) {
+    // TODO: implement
+  }
+
+  @Override
+  public void logout() {
+    // TODO: implement
   }
 
 }

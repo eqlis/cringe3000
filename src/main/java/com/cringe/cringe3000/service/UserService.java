@@ -23,4 +23,10 @@ public interface UserService {
 
   Optional<User> findByUsername(String username);
 
+  Optional<User> findByEmailOrUsername(String username);
+
+  void resetPassword(Long id);
+
+  void logout();
+
 }

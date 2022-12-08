@@ -16,14 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import static com.cringe.cringe3000.util.Constants.EMAIL_VALIDATION;
-import static com.cringe.cringe3000.util.Constants.MAX;
-import static com.cringe.cringe3000.util.Constants.PATTERN;
-import static com.cringe.cringe3000.util.Constants.REQUIRED;
 
 @Entity
 @Builder
@@ -37,31 +29,24 @@ public class Person {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotEmpty(message = REQUIRED)
-  @Size(max = 256, message = MAX)
   private String firstName;
 
-  @NotEmpty(message = REQUIRED)
-  @Size(max = 256, message = MAX)
   private String lastName;
 
-  @Size(max = 256, message = MAX)
-  @Pattern(regexp = EMAIL_VALIDATION, message = PATTERN)
+  private String surname;
+
   private String email;
 
   private int age;
 
   private int experience;
 
-  @Size(max = 50, message = MAX)
   private String phone;
 
-  @Size(max = 1000, message = MAX)
   private String bio;
 
   @Enumerated(EnumType.STRING)
-  @Builder.Default
-  private Gender gender = Gender.MALE;
+  private Gender gender;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "user_id", referencedColumnName = "id")

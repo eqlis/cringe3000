@@ -7,6 +7,7 @@ import com.cringe.cringe3000.service.SubjectService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,10 +18,13 @@ public class SubjectServiceImpl implements SubjectService {
 
   private final SubjectRepository repository;
 
+  @Override
   public List<SubjectDTO> findAll() {
     return repository.findAll().stream().map(SubjectDTO::from).toList();
   }
 
+  @Override
+  @Transactional
   public boolean create(Long id, SubjectDTO subjectDTO) {
     if (repository.existsById(id)) {
       log.error("Subject with id = " + id + " already exists");
@@ -30,6 +34,8 @@ public class SubjectServiceImpl implements SubjectService {
     return true;
   }
 
+  @Override
+  @Transactional
   public boolean update(Long id, SubjectDTO subjectDTO) {
     if (repository.existsById(id)) {
       Subject subject = subjectDTO.toSubject();
@@ -41,6 +47,8 @@ public class SubjectServiceImpl implements SubjectService {
     return false;
   }
 
+  @Override
+  @Transactional
   public boolean delete(Long id) {
     if (repository.existsById(id)) {
       repository.deleteById(id);

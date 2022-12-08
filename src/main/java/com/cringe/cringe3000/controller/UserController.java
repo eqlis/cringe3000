@@ -6,7 +6,6 @@ import com.cringe.cringe3000.model.dto.RegisterRequest;
 import com.cringe.cringe3000.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,13 +24,13 @@ public class UserController {
   private final UserService userService;
 
   @PostMapping("/auth")
-  public ResponseEntity<String> authenticate(@Valid @RequestBody LoginRequest loginRequest) {
-    return ResponseEntity.ok(userService.authenticate(loginRequest));
+  public String authenticate(@Valid @RequestBody LoginRequest loginRequest) {
+    return userService.authenticate(loginRequest);
   }
 
   @PostMapping("/register")
-  public ResponseEntity<Boolean> register(@Valid @RequestBody RegisterRequest registerRequest) {
-    return ResponseEntity.ok(userService.register(registerRequest));
+  public Boolean register(@Valid @RequestBody RegisterRequest registerRequest) {
+    return userService.register(registerRequest);
   }
 
   @GetMapping("/activate/{token}")
@@ -41,13 +40,26 @@ public class UserController {
   }
 
   @PostMapping("/forgot")
-  public ResponseEntity<Boolean> forgotPassword(@RequestParam("email") String email) {
-    return ResponseEntity.ok(userService.forgotPassword(email));
+  public Boolean forgotPassword(@RequestParam("email") String email) {
+    return userService.forgotPassword(email);
   }
 
   @PutMapping("/change-password/{token}")
+  @ResponseStatus(HttpStatus.OK)
   public void changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest, @PathVariable("token") String token) {
     userService.changePassword(changePasswordRequest, token);
+  }
+
+  @PostMapping("/reset/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public void resetPassword(@PathVariable("id") Long id) {
+    userService.resetPassword(id);
+  }
+
+  @PostMapping("/logout")
+  @ResponseStatus(HttpStatus.OK)
+  public void logout() {
+    userService.logout();
   }
 
 }
