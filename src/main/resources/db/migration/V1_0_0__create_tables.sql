@@ -26,12 +26,13 @@ create table person (
     last_name varchar(255),
     surname varchar(255),
     email varchar(255),
-    age integer not null default 0,
+    birthday date not null,
     gender varchar(10) check (gender in ('FEMALE', 'MALE')),
     experience integer not null default 0,
     phone varchar(50),
     bio varchar(1000),
     degree_id bigint,
+    photo bytea,
     constraint fk_person_user foreign key(user_id) references user_(id),
     constraint fk_person_degree foreign key(degree_id) references degree(id)
 );

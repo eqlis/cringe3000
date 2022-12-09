@@ -2,15 +2,24 @@ package com.cringe.cringe3000.model.dto;
 
 import com.cringe.cringe3000.model.entity.Person;
 import com.cringe.cringe3000.model.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+
+import static com.cringe.cringe3000.util.Constants.DATE_FORMAT;
 import static com.cringe.cringe3000.util.Constants.EMAIL_VALIDATION;
+import static com.cringe.cringe3000.util.Constants.FUTURE;
 import static com.cringe.cringe3000.util.Constants.MAX;
+import static com.cringe.cringe3000.util.Constants.NEGATIVE;
 import static com.cringe.cringe3000.util.Constants.PATTERN;
 import static com.cringe.cringe3000.util.Constants.REQUIRED;
 
@@ -36,10 +45,13 @@ public class PersonDTO {
   @Pattern(regexp = EMAIL_VALIDATION, message = PATTERN)
   private final String email;
 
+  @JsonFormat(pattern = DATE_FORMAT)
   @NotEmpty(message = REQUIRED)
-  private final int age;
+  @PastOrPresent(message = FUTURE)
+  private final LocalDate birthday;
 
   @NotEmpty(message = REQUIRED)
+  @Min(value = 0, message = NEGATIVE)
   private final int experience;
 
   @Size(max = 50, message = MAX)
@@ -50,6 +62,8 @@ public class PersonDTO {
 
   private final Gender gender;
 
+  private final String photo;
+
   public static PersonDTO from(Person p) {
     return new PersonDTO(
         p.getId(),
@@ -57,11 +71,12 @@ public class PersonDTO {
         p.getLastName(),
         p.getSurname(),
         p.getEmail(),
-        p.getAge(),
+        p.getBirthday(),
         p.getExperience(),
         p.getPhone(),
         p.getBio(),
-        p.getGender());
+        p.getGender(),
+        new String(p.getPhoto(), StandardCharsets.UTF_8));
   }
 
   public Person toPerson() {
@@ -71,11 +86,12 @@ public class PersonDTO {
     p.setLastName(lastName);
     p.setSurname(surname);
     p.setEmail(email);
-    p.setAge(age);
+    p.setBirthday(birthday);
     p.setExperience(experience);
     p.setPhone(phone);
     p.setBio(bio);
     p.setGender(gender);
+    p.setPhoto(photo.getBytes(StandardCharsets.UTF_8));
     return p;
   }
 

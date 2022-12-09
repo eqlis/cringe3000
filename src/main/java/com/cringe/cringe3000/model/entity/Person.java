@@ -14,8 +14,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDate;
 
 @Entity
 @Builder
@@ -37,7 +39,7 @@ public class Person {
 
   private String email;
 
-  private int age;
+  private LocalDate birthday;
 
   private int experience;
 
@@ -47,6 +49,9 @@ public class Person {
 
   @Enumerated(EnumType.STRING)
   private Gender gender;
+
+  @Lob
+  private byte[] photo;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "user_id", referencedColumnName = "id")
