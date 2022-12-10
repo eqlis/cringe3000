@@ -11,10 +11,15 @@ import com.cringe.cringe3000.service.EmailService;
 import com.cringe.cringe3000.service.UserService;
 import com.cringe.cringe3000.service.VerificationTokenService;
 import lombok.AllArgsConstructor;
+import org.passay.CharacterData;
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.PasswordGenerator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +31,10 @@ import static com.cringe.cringe3000.util.Constants.CHANGE_PASSWORD;
 import static com.cringe.cringe3000.util.Constants.CONFIRMATION_INSTRUCTION;
 import static com.cringe.cringe3000.util.Constants.CONFIRMATION_LINK;
 import static com.cringe.cringe3000.util.Constants.FORGOT_PASSWORD_INSTRUCTION;
+import static com.cringe.cringe3000.util.Constants.PASSWORD_RESET;
 import static com.cringe.cringe3000.util.Constants.REGISTRATION_CONFIRMATION;
 import static com.cringe.cringe3000.util.Constants.CHANGE_PASSWORD_LINK;
+import static org.passay.AllowedCharacterRule.ERROR_CODE;
 
 @Service
 @AllArgsConstructor
@@ -91,13 +98,9 @@ public class UserServiceImpl implements UserService {
         .filter(vt -> vt.isNotExpired() && !vt.isVerified())
         .orElseThrow(EntityNotFoundException::new);
     User user = verificationToken.getUser();
-    if (encoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
-      user.setPassword(encoder.encode(changePasswordRequest.getNewPassword()));
-      userRepository.save(user);
-      verificationTokenService.verifyToken(verificationToken);
-    } else {
-      throw new EntityNotFoundException();
-    }
+    user.setPassword(encoder.encode(changePasswordRequest.getNewPassword()));
+    userRepository.save(user);
+    verificationTokenService.verifyToken(verificationToken);
   }
 
   @Override
@@ -116,13 +119,47 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void resetPassword(Long id) {
-    // TODO: implement
+  @Transactional
+  public void resetPassword(Long id, UserDetails userDetails) {
+    User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    User admin = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(EntityNotFoundException::new);
+    String password = generatePassword();
+    user.setPassword(encoder.encode(password));
+    userRepository.save(user);
+    String text = "Password for " + user.getUsername() + " was changed to: " + password;
+    emailService.sendMail(admin.getEmail(), PASSWORD_RESET, text);
   }
 
   @Override
   public void logout() {
     // TODO: implement
+  }
+
+  private String generatePassword() {
+    PasswordGenerator generator = new PasswordGenerator();
+
+    CharacterRule lowerCaseRule = new CharacterRule(EnglishCharacterData.LowerCase);
+    lowerCaseRule.setNumberOfCharacters(2);
+    CharacterRule upperCaseRule = new CharacterRule(EnglishCharacterData.UpperCase);
+    upperCaseRule.setNumberOfCharacters(2);
+    CharacterRule digitRule = new CharacterRule(EnglishCharacterData.Digit);
+    digitRule.setNumberOfCharacters(2);
+
+    CharacterData specialChars = new CharacterData() {
+      @Override
+      public String getErrorCode() {
+        return ERROR_CODE;
+      }
+
+      @Override
+      public String getCharacters() {
+        return "!@#$%^&*()_+";
+      }
+    };
+    CharacterRule splCharRule = new CharacterRule(specialChars);
+    splCharRule.setNumberOfCharacters(2);
+
+    return generator.generatePassword(12, splCharRule, lowerCaseRule, upperCaseRule, digitRule);
   }
 
 }

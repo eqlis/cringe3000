@@ -14,8 +14,6 @@ import static com.cringe.cringe3000.util.Constants.REQUIRED;
 @AllArgsConstructor
 public class ChangePasswordRequest {
 
-  private final String oldPassword;
-
   @NotEmpty(message = REQUIRED)
   @Pattern(regexp = PASSWORD_VALIDATION, message = PATTERN)
   private final String newPassword;

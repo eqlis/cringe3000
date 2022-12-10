@@ -6,6 +6,9 @@ import com.cringe.cringe3000.model.dto.RegisterRequest;
 import com.cringe.cringe3000.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,10 +53,11 @@ public class UserController {
     userService.changePassword(changePasswordRequest, token);
   }
 
+  @PreAuthorize("hasAuthority('ADMIN')")
   @PostMapping("/reset/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public void resetPassword(@PathVariable("id") Long id) {
-    userService.resetPassword(id);
+  public void resetPassword(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("id") Long id) {
+    userService.resetPassword(id, userDetails);
   }
 
   @PostMapping("/logout")

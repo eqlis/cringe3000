@@ -2,8 +2,8 @@ package com.cringe.cringe3000.service;
 
 import com.cringe.cringe3000.model.dto.PersonDTO;
 import com.cringe.cringe3000.model.dto.PersonLightDTO;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.security.Principal;
 import java.util.List;
 
 public interface PersonService {
@@ -12,10 +12,10 @@ public interface PersonService {
 
   PersonDTO findById(Long id);
 
-  boolean create(Long id, PersonDTO personDTO, Principal principal);
+  boolean create(Long id, PersonDTO personDTO, UserDetails userDetails);
 
-  boolean update(Long id, PersonDTO personDTO, Principal principal);
+  boolean update(Long id, PersonDTO personDTO, UserDetails userDetails);
 
-  boolean delete(Long id, Principal principal);
+  boolean delete(Long id, UserDetails userDetails);
 
 }

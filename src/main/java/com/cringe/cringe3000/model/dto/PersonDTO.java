@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -46,11 +47,10 @@ public class PersonDTO {
   private final String email;
 
   @JsonFormat(pattern = DATE_FORMAT)
-  @NotEmpty(message = REQUIRED)
+  @NotNull(message = REQUIRED)
   @PastOrPresent(message = FUTURE)
   private final LocalDate birthday;
 
-  @NotEmpty(message = REQUIRED)
   @Min(value = 0, message = NEGATIVE)
   private final int experience;
 
@@ -76,7 +76,7 @@ public class PersonDTO {
         p.getPhone(),
         p.getBio(),
         p.getGender(),
-        new String(p.getPhoto(), StandardCharsets.UTF_8));
+        p.getPhoto() == null ? null : new String(p.getPhoto(), StandardCharsets.UTF_8));
   }
 
   public Person toPerson() {
@@ -91,7 +91,7 @@ public class PersonDTO {
     p.setPhone(phone);
     p.setBio(bio);
     p.setGender(gender);
-    p.setPhoto(photo.getBytes(StandardCharsets.UTF_8));
+    p.setPhoto(photo == null ? null: photo.getBytes(StandardCharsets.UTF_8));
     return p;
   }
 

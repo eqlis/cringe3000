@@ -33,6 +33,8 @@ create table person (
     bio varchar(1000),
     degree_id bigint,
     photo bytea,
+    interests varchar(255) [],
+    publications varchar(255) [],
     constraint fk_person_user foreign key(user_id) references user_(id),
     constraint fk_person_degree foreign key(degree_id) references degree(id)
 );
@@ -47,26 +49,10 @@ create table verification_token (
     constraint fk_verification_token_user foreign key(user_id) references user_(id)
 );
 
-create table user_subject (
-    user_id bigint,
+create table person_subject (
+    person_id bigint,
     subject_id bigint,
-    constraint fk_user_subject_user foreign key(user_id) references user_(id),
-    constraint fk_user_subject_subject foreign key(subject_id) references subject(id),
-    constraint uc_user_subject unique (user_id, subject_id)
-);
-
-create table interest (
-    id bigserial primary key,
-    name varchar(255),
-    user_id bigint,
-    constraint fk_interest_user foreign key(user_id) references user_(id),
-    constraint uc_interest unique (id, user_id)
-);
-
-create table publication (
-    id bigserial primary key,
-    name varchar(255),
-    user_id bigint,
-    constraint fk_publication_user foreign key(user_id) references user_(id),
-    constraint uc_publication unique (id, user_id)
+    constraint fk_person_subject_person foreign key(person_id) references person(id),
+    constraint fk_person_subject_subject foreign key(subject_id) references subject(id),
+    constraint uc_person_subject unique (person_id, subject_id)
 );

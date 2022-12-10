@@ -40,7 +40,6 @@ public class RegisterRequest {
   @Pattern(regexp = PASSWORD_VALIDATION, message = PATTERN)
   private final String password;
 
-  @NotEmpty(message = REQUIRED)
   private final Role role;
 
   public User toUser() {

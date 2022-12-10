@@ -4,6 +4,7 @@ import com.cringe.cringe3000.model.dto.ChangePasswordRequest;
 import com.cringe.cringe3000.model.dto.LoginRequest;
 import com.cringe.cringe3000.model.dto.RegisterRequest;
 import com.cringe.cringe3000.model.entity.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public interface UserService {
 
   Optional<User> findByEmailOrUsername(String username);
 
-  void resetPassword(Long id);
+  void resetPassword(Long id, UserDetails userDetails);
 
   void logout();
 

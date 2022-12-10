@@ -9,11 +9,11 @@ import com.cringe.cringe3000.service.PersonService;
 import com.cringe.cringe3000.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -36,8 +36,8 @@ public class PersonServiceImpl implements PersonService {
 
   @Override
   @Transactional
-  public boolean create(Long id, PersonDTO personDTO, Principal principal) {
-    User user = userService.findByEmailOrUsername(principal.getName()).orElseThrow(EntityNotFoundException::new);
+  public boolean create(Long id, PersonDTO personDTO, UserDetails userDetails) {
+    User user = userService.findByEmailOrUsername(userDetails.getUsername()).orElseThrow(EntityNotFoundException::new);
     if (repository.existsById(id)) {
       log.error("Person with id = " + id + " already exists");
       return false;
@@ -51,27 +51,27 @@ public class PersonServiceImpl implements PersonService {
 
   @Override
   @Transactional
-  public boolean update(Long id, PersonDTO personDTO, Principal principal) {
-    if (repository.existsByIdAndPrincipal(id, principal.getName())) {
-      User user = userService.findByEmailOrUsername(principal.getName()).get();
+  public boolean update(Long id, PersonDTO personDTO, UserDetails userDetails) {
+    if (repository.existsByIdAndPrincipal(id, userDetails.getUsername())) {
+      User user = userService.findByEmailOrUsername(userDetails.getUsername()).get();
       Person person = personDTO.toPerson();
       person.setId(id);
       person.setUser(user);
       repository.save(person);
       return true;
     }
-    log.error("No person with id = " + id + " or it does not belong to user with username = " + principal.getName());
+    log.error("No person with id = " + id + " or it does not belong to user with username = " + userDetails.getUsername());
     return false;
   }
 
   @Override
   @Transactional
-  public boolean delete(Long id, Principal principal) {
-    if (repository.existsByIdAndPrincipal(id, principal.getName())) {
+  public boolean delete(Long id, UserDetails userDetails) {
+    if (repository.existsByIdAndPrincipal(id, userDetails.getUsername())) {
       repository.deleteById(id);
       return true;
     }
-    log.error("No person with id = " + id + " or it does not belong to user with username = " + principal.getName());
+    log.error("No person with id = " + id + " or it does not belong to user with username = " + userDetails.getUsername());
     return false;
   }
 
