@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.cringe.cringe3000.util.Constants.DATE_FORMAT;
 import static com.cringe.cringe3000.util.Constants.EMAIL_VALIDATION;
@@ -64,19 +65,31 @@ public class PersonDTO {
 
   private final String photo;
 
+  private final String[] interests;
+
+  private final String[] publications;
+
+  private final DegreeDTO degree;
+
+  private final List<SubjectDTO> subjects;
+
   public static PersonDTO from(Person p) {
     return new PersonDTO(
-        p.getId(),
-        p.getFirstName(),
-        p.getLastName(),
-        p.getSurname(),
-        p.getEmail(),
-        p.getBirthday(),
-        p.getExperience(),
-        p.getPhone(),
-        p.getBio(),
-        p.getGender(),
-        p.getPhoto() == null ? null : new String(p.getPhoto(), StandardCharsets.UTF_8));
+      p.getId(),
+      p.getFirstName(),
+      p.getLastName(),
+      p.getSurname(),
+      p.getEmail(),
+      p.getBirthday(),
+      p.getExperience(),
+      p.getPhone(),
+      p.getBio(),
+      p.getGender(),
+      p.getPhoto() == null ? null : new String(p.getPhoto(), StandardCharsets.UTF_8),
+      p.getInterests(),
+      p.getPublications(),
+      p.getDegree() == null ? null : DegreeDTO.from(p.getDegree()),
+      p.getSubjects() == null ? null : p.getSubjects().stream().map(SubjectDTO::from).toList());
   }
 
   public Person toPerson() {
@@ -92,6 +105,10 @@ public class PersonDTO {
     p.setBio(bio);
     p.setGender(gender);
     p.setPhoto(photo == null ? null: photo.getBytes(StandardCharsets.UTF_8));
+    p.setInterests(interests);
+    p.setPublications(publications);
+    p.setDegree(degree == null ? null : degree.toDegree());
+    p.setSubjects(subjects == null ? null : subjects.stream().map(SubjectDTO::toSubject).toList());
     return p;
   }
 

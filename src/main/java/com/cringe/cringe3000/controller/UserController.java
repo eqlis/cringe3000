@@ -60,6 +60,7 @@ public class UserController {
     userService.resetPassword(id, userDetails);
   }
 
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
   @PostMapping("/logout")
   @ResponseStatus(HttpStatus.OK)
   public void logout() {

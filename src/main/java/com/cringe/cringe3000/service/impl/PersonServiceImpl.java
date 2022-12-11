@@ -1,9 +1,17 @@
 package com.cringe.cringe3000.service.impl;
 
-import com.cringe.cringe3000.model.dto.*;
+import com.cringe.cringe3000.model.dto.FilterParams;
+import com.cringe.cringe3000.model.dto.PageResponse;
+import com.cringe.cringe3000.model.dto.PersonBase;
+import com.cringe.cringe3000.model.dto.PersonDTO;
+import com.cringe.cringe3000.model.dto.PersonLightDTO;
+import com.cringe.cringe3000.model.entity.Degree;
 import com.cringe.cringe3000.model.entity.Person;
+import com.cringe.cringe3000.model.entity.Subject;
 import com.cringe.cringe3000.model.entity.User;
+import com.cringe.cringe3000.repository.DegreeRepository;
 import com.cringe.cringe3000.repository.PersonRepository;
+import com.cringe.cringe3000.repository.SubjectRepository;
 import com.cringe.cringe3000.service.PersonService;
 import com.cringe.cringe3000.service.UserService;
 import lombok.AllArgsConstructor;
@@ -23,6 +31,8 @@ import java.util.List;
 public class PersonServiceImpl implements PersonService {
 
   private final PersonRepository repository;
+  private final DegreeRepository degreeRepository;
+  private final SubjectRepository subjectRepository;
   private final UserService userService;
 
   @Override
@@ -44,6 +54,14 @@ public class PersonServiceImpl implements PersonService {
       return false;
     }
     Person person = personDTO.toPerson();
+    Degree degree = person.getDegree();
+    if (degree != null) {
+      person.setDegree(degreeRepository.findById(degree.getId()).orElseThrow(EntityNotFoundException::new));
+    }
+    List<Subject> subjects = person.getSubjects();
+    if (subjects != null && !subjects.isEmpty()) {
+      person.setSubjects(subjects.stream().map(s -> subjectRepository.findById(s.getId()).orElseThrow(EntityNotFoundException::new)).toList());
+    }
     person.setId(id);
     person.setUser(user);
     repository.save(person);

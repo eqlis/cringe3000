@@ -12,7 +12,7 @@ public class PersonLightDTO {
   private final String name;
 
   public static PersonLightDTO from(Person p) {
-    return new PersonLightDTO(p.getId(), p.getFirstName() + " " + p.getLastName());
+    return new PersonLightDTO(p.getId(), p.getFirstName() + " " + p.getSurname() + " " + p.getLastName());
   }
 
 }

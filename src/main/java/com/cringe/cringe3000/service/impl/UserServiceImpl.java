@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void logout() {
-    // TODO: implement
+    //TODO: implement
   }
 
   private String generatePassword() {

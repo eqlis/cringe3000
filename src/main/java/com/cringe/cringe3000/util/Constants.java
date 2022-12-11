@@ -7,6 +7,7 @@ public class Constants {
   public static final String PATTERN = "pattern";
   public static final String FUTURE = "future";
   public static final String NEGATIVE = "negative";
+  public static final String DOES_NOT_MATCH = "does not match";
 
   public static final String EMAIL_VALIDATION = "^(?=.{1,64}@)[a-z0-9_-]+(\\.[a-z0-9_-]+)*@[^-][a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,})$";
   public static final String USERNAME_VALIDATION = "^(?=.*[a-zA-Z])(?=.+[a-zA-Z0-9@._-]).{5,}$";

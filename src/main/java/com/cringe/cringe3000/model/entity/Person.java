@@ -24,7 +24,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @TypeDefs({@TypeDef(name = "string-array", typeClass = StringArrayType.class)})
 @Entity
@@ -78,5 +78,10 @@ public class Person {
     joinColumns = @JoinColumn(name = "person_id"),
     inverseJoinColumns = @JoinColumn(name = "subject_id")
   )
-  private Set<Subject> subjects;
+  private List<Subject> subjects;
+
+  @ManyToOne
+  @JoinColumn(name = "degree_id", referencedColumnName = "id")
+  private Degree degree;
+
 }
