@@ -43,4 +43,5 @@ public class DegreeController {
     public boolean delete(@PathVariable Long id) {
         return service.delete(id);
     }
+
 }

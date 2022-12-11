@@ -1,9 +1,10 @@
 package com.cringe.cringe3000.controller;
 
-import com.cringe.cringe3000.model.dto.PersonDTO;
-import com.cringe.cringe3000.model.dto.PersonLightDTO;
+import com.cringe.cringe3000.model.dto.*;
 import com.cringe.cringe3000.service.PersonService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,6 +51,11 @@ public class PersonController {
   @DeleteMapping("/person/{id}")
   public boolean delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("id") Long id) {
     return service.delete(id, userDetails);
+  }
+
+  @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+  public PageResponse sortByPar(@RequestBody FilterParams filterParams, @PageableDefault(size=8) Pageable pageable) {
+    return service.findPersons(filterParams, pageable);
   }
 
 }

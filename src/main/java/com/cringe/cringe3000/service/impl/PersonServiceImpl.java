@@ -1,7 +1,6 @@
 package com.cringe.cringe3000.service.impl;
 
-import com.cringe.cringe3000.model.dto.PersonDTO;
-import com.cringe.cringe3000.model.dto.PersonLightDTO;
+import com.cringe.cringe3000.model.dto.*;
 import com.cringe.cringe3000.model.entity.Person;
 import com.cringe.cringe3000.model.entity.User;
 import com.cringe.cringe3000.repository.PersonRepository;
@@ -9,6 +8,8 @@ import com.cringe.cringe3000.service.PersonService;
 import com.cringe.cringe3000.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +74,19 @@ public class PersonServiceImpl implements PersonService {
     }
     log.error("No person with id = " + id + " or it does not belong to user with username = " + userDetails.getUsername());
     return false;
+  }
+
+  @Override
+  public PageResponse findPersons(FilterParams filterParameters, Pageable pageable){
+    String[] fullName = filterParameters.getName().split(" ");
+    Page<PersonBase> page;
+    if (filterParameters == null){
+      page = repository.findAll(pageable).map(PersonBase::from);
+      return new PageResponse(page.getContent(), page.getTotalElements());
+    }
+    page = repository.getPersonsByParams(pageable, fullName[1], fullName[2], fullName[0], filterParameters.getExperience(),
+            filterParameters.getDegreeId(), filterParameters.getSubjectId()).map(PersonBase::from);
+    return new PageResponse(page.getContent(), page.getTotalElements());
   }
 
 }
