@@ -7,6 +7,7 @@ import com.cringe.cringe3000.service.DegreeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,10 +18,13 @@ public class DegreeServiceImpl implements DegreeService {
 
     private final DegreeRepository repository;
 
+    @Override
     public List<DegreeDTO> findAll() {
         return repository.findAll().stream().map(DegreeDTO::from).toList();
     }
 
+    @Override
+    @Transactional
     public boolean create(Long id, DegreeDTO degreeDTO) {
         if (repository.existsById(id)) {
             log.error("Degree with id = " + id + " already exists");
@@ -30,6 +34,8 @@ public class DegreeServiceImpl implements DegreeService {
         return true;
     }
 
+    @Override
+    @Transactional
     public boolean update(Long id, DegreeDTO degreeDTO) {
         if (repository.existsById(id)) {
             Degree degree = degreeDTO.toDegree();
@@ -40,7 +46,8 @@ public class DegreeServiceImpl implements DegreeService {
         log.error("No degree with id = " + id);
         return false;
     }
-
+    @Override
+    @Transactional
     public boolean delete(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
