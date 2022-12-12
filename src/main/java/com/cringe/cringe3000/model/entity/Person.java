@@ -3,7 +3,6 @@ package com.cringe.cringe3000.model.entity;
 import com.cringe.cringe3000.model.enums.Gender;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +27,6 @@ import java.util.List;
 
 @TypeDefs({@TypeDef(name = "string-array", typeClass = StringArrayType.class)})
 @Entity
-@Builder
 @Getter
 @Setter
 @NoArgsConstructor

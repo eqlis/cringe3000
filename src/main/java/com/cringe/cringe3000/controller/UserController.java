@@ -61,10 +61,10 @@ public class UserController {
   }
 
   @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
-  @PostMapping("/logout")
+  @PostMapping("/exit")
   @ResponseStatus(HttpStatus.OK)
-  public void logout() {
-    userService.logout();
+  public void logout(@AuthenticationPrincipal UserDetails userDetails) {
+    userService.logout(userDetails);
   }
 
 }

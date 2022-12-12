@@ -1,7 +1,6 @@
 package com.cringe.cringe3000.model.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +19,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
 @Getter
 @Setter
 @NoArgsConstructor

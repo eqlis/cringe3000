@@ -43,12 +43,12 @@ public class RegisterRequest {
   private final Role role;
 
   public User toUser() {
-    return User.builder()
-        .email(email)
-        .username(username)
-        .password(password)
-        .role(role)
-        .build();
+    User user = new User();
+    user.setEmail(email);
+    user.setUsername(username);
+    user.setPassword(password);
+    user.setRole(role);
+    return user;
   }
 
 }

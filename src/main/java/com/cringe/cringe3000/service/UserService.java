@@ -28,6 +28,6 @@ public interface UserService {
 
   void resetPassword(Long id, UserDetails userDetails);
 
-  void logout();
+  void logout(UserDetails userDetails);
 
 }

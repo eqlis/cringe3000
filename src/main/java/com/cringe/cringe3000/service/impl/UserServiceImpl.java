@@ -4,10 +4,12 @@ import com.cringe.cringe3000.auth.JwtUtils;
 import com.cringe.cringe3000.model.dto.ChangePasswordRequest;
 import com.cringe.cringe3000.model.dto.LoginRequest;
 import com.cringe.cringe3000.model.dto.RegisterRequest;
+import com.cringe.cringe3000.model.entity.Jwt;
 import com.cringe.cringe3000.model.entity.User;
 import com.cringe.cringe3000.model.entity.VerificationToken;
 import com.cringe.cringe3000.repository.UserRepository;
 import com.cringe.cringe3000.service.EmailService;
+import com.cringe.cringe3000.service.JwtService;
 import com.cringe.cringe3000.service.UserService;
 import com.cringe.cringe3000.service.VerificationTokenService;
 import lombok.AllArgsConstructor;
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static com.cringe.cringe3000.util.Constants.CHANGE_PASSWORD;
@@ -46,13 +50,19 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder encoder;
   private final VerificationTokenService verificationTokenService;
   private final EmailService emailService;
+  private final JwtService jwtService;
 
   @Override
+  @Transactional
   public String authenticate(LoginRequest loginRequest) {
     Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    return jwtUtils.generateJwtToken(authentication);
+    String token = jwtUtils.generateJwtToken(authentication);
+    User user = userRepository.findByEmailOrUsername(loginRequest.getUsername()).orElseThrow(EntityNotFoundException::new);
+    Jwt jwt = new Jwt(token, Instant.now().plus(1, ChronoUnit.HOURS), true, user);
+    jwtService.save(jwt);
+    return token;
   }
 
   @Override
@@ -131,8 +141,13 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public void logout() {
-    //TODO: implement
+  public void logout(UserDetails userDetails) {
+    User user = userRepository.findByEmailOrUsername(userDetails.getUsername()).orElseThrow(EntityNotFoundException::new);
+    Jwt jwt = user.getJwts().stream().filter(t -> t.isActive() && t.getExpireAt().isAfter(Instant.now())).findFirst()
+        .orElseThrow(EntityNotFoundException::new);
+    jwt.setExpireAt(Instant.now());
+    jwt.setActive(false);
+    userRepository.save(user);
   }
 
   private String generatePassword() {

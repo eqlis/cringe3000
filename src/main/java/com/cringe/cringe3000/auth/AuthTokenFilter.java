@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cringe.cringe3000.service.JwtService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,13 +24,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
   private final JwtUtils jwtUtils;
   private final UserDetailsService userDetailsService;
+  private final JwtService jwtService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
     try {
       String jwt = parseJwt(request);
-      if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+      if (jwt != null && jwtUtils.validateJwtToken(jwt) && jwtService.existsById(jwt) && jwtService.jwtIsNotExpired(jwt)) {
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -38,6 +40,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        jwtService.refresh(jwt);
       }
     } catch (Exception e) {
       log.error("Cannot set user authentication " + e);

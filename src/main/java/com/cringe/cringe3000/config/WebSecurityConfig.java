@@ -3,6 +3,7 @@ package com.cringe.cringe3000.config;
 import com.cringe.cringe3000.auth.AuthEntryPointJwt;
 import com.cringe.cringe3000.auth.AuthTokenFilter;
 import com.cringe.cringe3000.auth.JwtUtils;
+import com.cringe.cringe3000.service.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +28,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private final UserDetailsService userDetailsService;
   private final AuthEntryPointJwt unauthorizedHandler;
   private final JwtUtils jwtUtils;
+  private final JwtService jwtService;
 
   @Bean
   public AuthTokenFilter authenticationJwtTokenFilter() {
-    return new AuthTokenFilter(jwtUtils, userDetailsService);
+    return new AuthTokenFilter(jwtUtils, userDetailsService, jwtService);
   }
 
   @Override
