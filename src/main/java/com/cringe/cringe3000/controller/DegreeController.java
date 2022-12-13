@@ -27,7 +27,7 @@ public class DegreeController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/degree/{id}  ")
+    @PostMapping("/degree/{id}")
     public boolean create(@PathVariable Long id, @Valid @RequestBody DegreeDTO degreeDTO) {
         return service.create(id, degreeDTO);
     }
