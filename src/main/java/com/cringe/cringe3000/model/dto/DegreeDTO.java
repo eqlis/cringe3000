@@ -26,4 +26,5 @@ public class DegreeDTO {
     public Degree toDegree() {
         return new Degree(id, name);
     }
+
 }
