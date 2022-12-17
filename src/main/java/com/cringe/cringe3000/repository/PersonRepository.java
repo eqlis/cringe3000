@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface PersonRepository extends JpaRepository<Person, Long>, PersonCustomRepository {
 
-  @Query("select true from Person p where p.id = :id and (p.user.email = :username or p.user.username = :username)")
+  @Query("select case when count(p) > 0 then true else false end from Person p where p.id = :id and (p.user.email = :username or p.user.username = :username)")
   boolean existsByIdAndPrincipal(@Param("id") Long id, @Param("username") String username);
 
 }
