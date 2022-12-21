@@ -10,7 +10,7 @@ import lombok.Getter;
 public class FilterParams {
 
     private final String name;
-    private final int experience;
+    private final Integer experience;
     private final Long degreeId;
     private final Long subjectId;
     private final SortParameter sortParam;

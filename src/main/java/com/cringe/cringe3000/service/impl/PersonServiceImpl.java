@@ -17,6 +17,7 @@ import com.cringe.cringe3000.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -95,16 +96,10 @@ public class PersonServiceImpl implements PersonService {
   }
 
   @Override
-  public PageResponse findPersons(FilterParams filterParameters, Pageable pageable){
-    String[] fullName = filterParameters.getName().split(" ");
-    Page<PersonBase> page;
-    if (filterParameters == null){
-      page = repository.findAll(pageable).map(PersonBase::from);
-      return new PageResponse(page.getContent(), page.getTotalElements());
-    }
-    page = repository.getPersonsByParams(pageable, fullName[1], fullName[2], fullName[0], filterParameters.getExperience(),
-            filterParameters.getDegreeId(), filterParameters.getSubjectId()).map(PersonBase::from);
-    return new PageResponse(page.getContent(), page.getTotalElements());
+  public PageResponse findPersons(FilterParams filterParameters, Integer pageNumber) {
+    Pageable pageable = PageRequest.of(pageNumber - 1, 8);
+    Page<PersonBase> page = repository.findByParams(filterParameters, pageable);
+    return new PageResponse(page.getContent(), page.getTotalPages());
   }
 
 }

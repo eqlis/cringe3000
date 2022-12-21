@@ -1,5 +1,6 @@
 package com.cringe.cringe3000.controller;
 
+import com.cringe.cringe3000.model.dto.AuthResponse;
 import com.cringe.cringe3000.model.dto.ChangePasswordRequest;
 import com.cringe.cringe3000.model.dto.LoginRequest;
 import com.cringe.cringe3000.model.dto.RegisterRequest;
@@ -27,7 +28,7 @@ public class UserController {
   private final UserService userService;
 
   @PostMapping("/auth")
-  public String authenticate(@Valid @RequestBody LoginRequest loginRequest) {
+  public AuthResponse authenticate(@Valid @RequestBody LoginRequest loginRequest) {
     return userService.authenticate(loginRequest);
   }
 

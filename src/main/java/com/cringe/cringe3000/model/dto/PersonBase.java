@@ -2,12 +2,16 @@ package com.cringe.cringe3000.model.dto;
 
 import com.cringe.cringe3000.model.entity.Person;
 import com.cringe.cringe3000.model.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
+import static com.cringe.cringe3000.util.Constants.DATE_FORMAT;
 
+@Getter
 @AllArgsConstructor
 public class PersonBase {
     private final Long id;
@@ -22,6 +26,7 @@ public class PersonBase {
 
     private final Gender gender;
 
+    @JsonFormat(pattern = DATE_FORMAT)
     private final LocalDate birthday;
 
     private final String phone;
