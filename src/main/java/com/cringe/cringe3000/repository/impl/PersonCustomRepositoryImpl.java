@@ -25,48 +25,52 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository {
   public Page<PersonBase> findByParams(FilterParams params, Pageable pageable) {
     String selectWhereGroupBy = "select p.* from person p join person_subject ps on p.id = ps.person_id " +
       "join degree d on p.degree_id = d.id join subject s on ps.subject_id = s.id";
-    if (params.getName() != null || params.getExperience() != null || params.getDegreeId() != null || params.getSubjectId() != null) {
-      selectWhereGroupBy += " where ";
-    }
-    if (params.getName() != null) {
-      String name = '%' + params.getName().toLowerCase().replace(' ', '%') + '%';
-      selectWhereGroupBy += "(lower(surname) || lower(first_name) || lower(last_name) like '" + name + "' or " +
-        "lower(surname) || lower(last_name) || lower(first_name) like '" + name + "' or " +
-        "lower(first_name) || lower(surname) || lower(last_name) like '" + name + "' or " +
-        "lower(first_name) || lower(last_name) || lower(surname) like '" + name + "' or " +
-        "lower(last_name) || lower(first_name) || lower(surname) like '" + name + "' or " +
-        "lower(last_name) || lower(surname) || lower(first_name) like '" + name + "') and ";
-    }
-    if (params.getExperience() != null) {
-      selectWhereGroupBy += "experience = " + params.getExperience() + " and ";
-    }
-    if (params.getDegreeId() != null) {
-      selectWhereGroupBy += "degree_id = " + params.getDegreeId() + " and ";
-    }
-    if (params.getSubjectId() != null) {
-      selectWhereGroupBy += params.getSubjectId() + " in (select subject_id from person join person_subject on id = person_id where id = p.id)";
-    }
-    if (selectWhereGroupBy.endsWith("and ")) {
-      selectWhereGroupBy = selectWhereGroupBy.substring(0, selectWhereGroupBy.length() - 4);
-    }
-    selectWhereGroupBy += " group by p.id";
 
     String orderByLimitOffset = "";
-    if (params.getSortParam() != null) {
-      orderByLimitOffset += " order by ";
-      if (params.isAscending()) {
-        switch (params.getSortParam()) {
-          case NAME -> orderByLimitOffset += "surname, first_name, last_name";
-          case EXPERIENCE -> orderByLimitOffset += "experience";
-          case DEGREE -> orderByLimitOffset += "d.name";
-          case SUBJECT -> orderByLimitOffset += "s.name";
-        }
-      } else {
-        switch (params.getSortParam()) {
-          case NAME -> orderByLimitOffset += "surname desc, first_name desc, last_name desc";
-          case EXPERIENCE -> orderByLimitOffset += "experience";
-          case DEGREE -> orderByLimitOffset += "d.name";
-          case SUBJECT -> orderByLimitOffset += "s.name";
+
+    if (params != null) {
+      if (params.getName() != null || params.getExperience() != null || params.getDegreeId() != null || params.getSubjectId() != null) {
+        selectWhereGroupBy += " where ";
+      }
+      if (params.getName() != null) {
+        String name = '%' + params.getName().toLowerCase().replace(' ', '%') + '%';
+        selectWhereGroupBy += "(lower(surname) || lower(first_name) || lower(last_name) like '" + name + "' or " +
+          "lower(surname) || lower(last_name) || lower(first_name) like '" + name + "' or " +
+          "lower(first_name) || lower(surname) || lower(last_name) like '" + name + "' or " +
+          "lower(first_name) || lower(last_name) || lower(surname) like '" + name + "' or " +
+          "lower(last_name) || lower(first_name) || lower(surname) like '" + name + "' or " +
+          "lower(last_name) || lower(surname) || lower(first_name) like '" + name + "') and ";
+      }
+      if (params.getExperience() != null) {
+        selectWhereGroupBy += "experience = " + params.getExperience() + " and ";
+      }
+      if (params.getDegreeId() != null) {
+        selectWhereGroupBy += "degree_id = " + params.getDegreeId() + " and ";
+      }
+      if (params.getSubjectId() != null) {
+        selectWhereGroupBy += params.getSubjectId() + " in (select subject_id from person join person_subject on id = person_id where id = p.id)";
+      }
+      if (selectWhereGroupBy.endsWith("and ")) {
+        selectWhereGroupBy = selectWhereGroupBy.substring(0, selectWhereGroupBy.length() - 4);
+      }
+      selectWhereGroupBy += " group by p.id";
+
+      if (params.getSortParam() != null) {
+        orderByLimitOffset += " order by ";
+        if (params.isAscending()) {
+          switch (params.getSortParam()) {
+            case NAME -> orderByLimitOffset += "surname, first_name, last_name";
+            case EXPERIENCE -> orderByLimitOffset += "experience";
+            case DEGREE -> orderByLimitOffset += "d.name";
+            case SUBJECT -> orderByLimitOffset += "s.name";
+          }
+        } else {
+          switch (params.getSortParam()) {
+            case NAME -> orderByLimitOffset += "surname desc, first_name desc, last_name desc";
+            case EXPERIENCE -> orderByLimitOffset += "experience";
+            case DEGREE -> orderByLimitOffset += "d.name";
+            case SUBJECT -> orderByLimitOffset += "s.name";
+          }
         }
       }
     }
