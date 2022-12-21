@@ -4,6 +4,7 @@ import com.cringe.cringe3000.model.entity.Jwt;
 import com.cringe.cringe3000.model.entity.User;
 import com.cringe.cringe3000.model.entity.VerificationToken;
 import com.cringe.cringe3000.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -23,6 +24,7 @@ public class UserDTO {
 
     private final String email;
 
+    @JsonProperty("login")
     private final String username;
 
     private final Role role;

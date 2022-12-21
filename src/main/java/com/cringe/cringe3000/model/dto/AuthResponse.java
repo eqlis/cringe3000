@@ -11,8 +11,4 @@ public class AuthResponse {
     private final UserDTO user;
     private final String jwt;
 
-
-
-
-
 }

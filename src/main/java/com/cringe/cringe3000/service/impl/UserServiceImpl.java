@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String token = jwtUtils.generateJwtToken(authentication);
     User user = userRepository.findByEmailOrUsername(loginRequest.getUsername()).orElseThrow(EntityNotFoundException::new);
-    UserDTO userDTO = new UserDTO(user.getId(), user.getEmail(), user.getUsername(), user.getRole());
+    UserDTO userDTO = UserDTO.from(user);
     Jwt jwt = new Jwt(token, Instant.now().plus(1, ChronoUnit.HOURS), true, user);
     jwtService.save(jwt);
     return new AuthResponse(userDTO, token);
