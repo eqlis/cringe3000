@@ -54,7 +54,6 @@ public class PersonController {
     return service.delete(id, userDetails);
   }
 
-  @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
   @GetMapping("/page/{pageNumber}")
   public PageResponse sortByPar(@RequestBody(required = false) FilterParams filterParams, @PathVariable("pageNumber") Integer pageNumber) {
     return service.findPersons(filterParams, pageNumber);
