@@ -1,9 +1,7 @@
 package com.cringe.cringe3000.service.impl;
 
 import com.cringe.cringe3000.auth.JwtUtils;
-import com.cringe.cringe3000.model.dto.ChangePasswordRequest;
-import com.cringe.cringe3000.model.dto.LoginRequest;
-import com.cringe.cringe3000.model.dto.RegisterRequest;
+import com.cringe.cringe3000.model.dto.*;
 import com.cringe.cringe3000.model.entity.Jwt;
 import com.cringe.cringe3000.model.entity.User;
 import com.cringe.cringe3000.model.entity.VerificationToken;
@@ -54,15 +52,16 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public String authenticate(LoginRequest loginRequest) {
+  public AuthResponse authenticate(LoginRequest loginRequest) {
     Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String token = jwtUtils.generateJwtToken(authentication);
     User user = userRepository.findByEmailOrUsername(loginRequest.getUsername()).orElseThrow(EntityNotFoundException::new);
+    UserDTO userDTO = UserDTO.from(user);
     Jwt jwt = new Jwt(token, Instant.now().plus(1, ChronoUnit.HOURS), true, user);
     jwtService.save(jwt);
-    return token;
+    return new AuthResponse(userDTO, token);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.cringe.cringe3000.service;
 
+import com.cringe.cringe3000.model.dto.AuthResponse;
 import com.cringe.cringe3000.model.dto.ChangePasswordRequest;
 import com.cringe.cringe3000.model.dto.LoginRequest;
 import com.cringe.cringe3000.model.dto.RegisterRequest;
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-  String authenticate(LoginRequest loginRequest);
+  AuthResponse authenticate(LoginRequest loginRequest);
 
   boolean register(RegisterRequest registerRequest);
 
