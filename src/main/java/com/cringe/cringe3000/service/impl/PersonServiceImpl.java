@@ -14,6 +14,7 @@ import com.cringe.cringe3000.model.entity.User;
 import com.cringe.cringe3000.model.enums.Role;
 import com.cringe.cringe3000.repository.DegreeRepository;
 import com.cringe.cringe3000.repository.PersonRepository;
+import com.cringe.cringe3000.repository.PhotoRepository;
 import com.cringe.cringe3000.repository.SubjectRepository;
 import com.cringe.cringe3000.service.PersonService;
 import com.cringe.cringe3000.service.UserService;
@@ -40,6 +41,7 @@ public class PersonServiceImpl implements PersonService {
   private final PersonRepository repository;
   private final DegreeRepository degreeRepository;
   private final SubjectRepository subjectRepository;
+  private final PhotoRepository photoRepository;
   private final UserService userService;
 
   @Override
@@ -143,6 +145,7 @@ public class PersonServiceImpl implements PersonService {
     if (subjects != null && !subjects.isEmpty()) {
       person.setSubjects(subjects.stream().map(s -> subjectRepository.findById(s.getId()).orElseThrow(EntityNotFoundException::new)).toList());
     }
+    person.setPhotos(photoRepository.findAllByPersonId(person.getId()));
     person.setId(id);
     person.setUser(user);
     repository.save(person);
