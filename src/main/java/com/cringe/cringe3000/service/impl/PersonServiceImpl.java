@@ -16,8 +16,8 @@ import com.cringe.cringe3000.repository.DegreeRepository;
 import com.cringe.cringe3000.repository.PersonRepository;
 import com.cringe.cringe3000.repository.PhotoRepository;
 import com.cringe.cringe3000.repository.SubjectRepository;
+import com.cringe.cringe3000.repository.UserRepository;
 import com.cringe.cringe3000.service.PersonService;
-import com.cringe.cringe3000.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,12 +37,12 @@ import java.util.Objects;
 @Service
 @AllArgsConstructor
 public class PersonServiceImpl implements PersonService {
+  private final UserRepository userRepository;
 
   private final PersonRepository repository;
   private final DegreeRepository degreeRepository;
   private final SubjectRepository subjectRepository;
   private final PhotoRepository photoRepository;
-  private final UserService userService;
 
   @Override
   public List<PersonLightDTO> findAll() {
@@ -56,21 +56,10 @@ public class PersonServiceImpl implements PersonService {
 
   @Override
   @Transactional
-  public boolean create(Long id, PersonRequest personRequest, UserDetails userDetails) {
-    if (repository.existsById(id)) {
-      log.error("Person with id = " + id + " already exists");
-      return false;
-    }
-    save(id, personRequest, userDetails);
-    return true;
-  }
-
-  @Override
-  @Transactional
   public boolean update(Long id, PersonRequest personRequest, UserDetails userDetails) {
     User user = (User) userDetails;
-    if (repository.existsByIdAndPrincipal(id, user.getUsername()) || (repository.existsById(id) && user.getRole() == Role.ADMIN)) {
-      save(id, personRequest, userDetails);
+    if (Objects.equals(user.getId(), id) || (repository.existsById(id) && user.getRole() == Role.ADMIN)) {
+      save(id, personRequest);
       return true;
     }
     log.error("No person with id = " + id + " or it does not belong to user with username = " + userDetails.getUsername());
@@ -79,13 +68,13 @@ public class PersonServiceImpl implements PersonService {
 
   @Override
   @Transactional
-  public boolean delete(Long id, UserDetails userDetails) {
-    User user = (User) userDetails;
-    if (repository.existsByIdAndPrincipal(id, user.getUsername()) || (repository.existsById(id) && user.getRole() == Role.ADMIN)) {
+  public boolean delete(Long id) {
+    if (repository.existsById(id)) {
       repository.deleteById(id);
+      userRepository.deleteById(id);
       return true;
     }
-    log.error("No person with id = " + id + " or it does not belong to user with username = " + userDetails.getUsername());
+    log.error("No person with id = " + id);
     return false;
   }
 
@@ -100,7 +89,7 @@ public class PersonServiceImpl implements PersonService {
   @Transactional
   public void addPhoto(UserDetails userDetails, MultipartFile file, Long id) {
     User user = (User) userDetails;
-    if (repository.existsByIdAndPrincipal(id, user.getUsername()) || (repository.existsById(id) && user.getRole() == Role.ADMIN)) {
+    if (user.getId().equals(id) || (repository.existsById(id) && user.getRole() == Role.ADMIN)) {
       Person person = repository.findById(id).orElseThrow(EntityNotFoundException::new);
       try {
         Photo photo = Photo.from(person)
@@ -134,8 +123,7 @@ public class PersonServiceImpl implements PersonService {
     repository.save(person);
   }
 
-  private void save(Long id, PersonRequest personRequest, UserDetails userDetails) {
-    User user = userService.findByEmailOrUsername(userDetails.getUsername()).orElseThrow(EntityNotFoundException::new);
+  private void save(Long id, PersonRequest personRequest) {
     Person person = personRequest.toPerson();
     Degree degree = person.getDegree();
     if (degree != null) {
@@ -147,7 +135,6 @@ public class PersonServiceImpl implements PersonService {
     }
     person.setPhotos(photoRepository.findAllByPersonId(person.getId()));
     person.setId(id);
-    person.setUser(user);
     repository.save(person);
   }
 

@@ -41,21 +41,15 @@ public class PersonController {
   }
 
   @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
-  @PostMapping("/person/{id}")
-  public boolean create(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("id") Long id, @Valid @RequestBody PersonRequest person) {
-    return service.create(id, person, userDetails);
-  }
-
-  @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
   @PutMapping("/person/{id}")
   public boolean update(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("id") Long id, @Valid @RequestBody PersonRequest person) {
     return service.update(id, person, userDetails);
   }
 
-  @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+  @PreAuthorize("hasAnyAuthority('ADMIN')")
   @DeleteMapping("/person/{id}")
-  public boolean delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("id") Long id) {
-    return service.delete(id, userDetails);
+  public boolean delete(@PathVariable("id") Long id) {
+    return service.delete(id);
   }
 
   @GetMapping("/page/{pageNumber}")

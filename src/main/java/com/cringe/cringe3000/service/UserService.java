@@ -14,9 +14,7 @@ public interface UserService {
 
   AuthResponse authenticate(LoginRequest loginRequest);
 
-  boolean register(RegisterRequest registerRequest);
-
-  void activate(String token);
+  Long register(RegisterRequest registerRequest);
 
   boolean forgotPassword(String email);
 
@@ -25,8 +23,6 @@ public interface UserService {
   Optional<User> findByEmail(String email);
 
   Optional<User> findByUsername(String username);
-
-  Optional<User> findByEmailOrUsername(String username);
 
   void resetPassword(Long id, UserDetails userDetails);
 

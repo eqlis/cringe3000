@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,6 +19,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,6 +54,10 @@ public class User implements UserDetails {
   private boolean locked;
 
   private boolean deleted;
+
+  @PrimaryKeyJoinColumn
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  private Person person;
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
   private Set<VerificationToken> verificationTokens = new HashSet<>();

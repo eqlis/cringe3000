@@ -3,8 +3,10 @@ package com.cringe.cringe3000.service.impl;
 import com.cringe.cringe3000.auth.JwtUtils;
 import com.cringe.cringe3000.model.dto.*;
 import com.cringe.cringe3000.model.entity.Jwt;
+import com.cringe.cringe3000.model.entity.Person;
 import com.cringe.cringe3000.model.entity.User;
 import com.cringe.cringe3000.model.entity.VerificationToken;
+import com.cringe.cringe3000.model.enums.Gender;
 import com.cringe.cringe3000.repository.UserRepository;
 import com.cringe.cringe3000.service.EmailService;
 import com.cringe.cringe3000.service.JwtService;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -66,26 +69,16 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public boolean register(RegisterRequest registerRequest) {
+  public Long register(RegisterRequest registerRequest) {
     User user = registerRequest.toUser();
     user.setPassword(encoder.encode(user.getPassword()));
-    userRepository.save(user);
-    VerificationToken verificationToken = verificationTokenService.createVerificationToken(user);
-    String text = CONFIRMATION_INSTRUCTION + " " + CONFIRMATION_LINK + verificationToken.getToken();
-    emailService.sendMail(user.getEmail(), REGISTRATION_CONFIRMATION, text);
-    return true;
-  }
-
-  @Override
-  @Transactional
-  public void activate(String token) {
-    VerificationToken verificationToken = verificationTokenService.findByToken(token)
-        .filter(vt -> vt.isNotExpired() && !vt.isVerified())
-        .orElseThrow(EntityNotFoundException::new);
-    User user = verificationToken.getUser();
-    user.setEnabled(true);
-    userRepository.save(user);
-    verificationTokenService.verifyToken(verificationToken);
+    Long id = userRepository.save(user).getId();
+    Person person = new Person();
+    person.setId(id);
+    person.setBirthday(LocalDate.of(1900, 1, 1));
+    person.setGender(Gender.MALE);
+    user.setPerson(person);
+    return userRepository.save(user).getId();
   }
 
   @Override
@@ -120,11 +113,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public Optional<User> findByUsername(String username) {
     return userRepository.findByUsername(username);
-  }
-
-  @Override
-  public Optional<User> findByEmailOrUsername(String username) {
-    return userRepository.findByEmailOrUsername(username);
   }
 
   @Override

@@ -16,11 +16,9 @@ public interface PersonService {
 
   PersonResponse findById(Long id);
 
-  boolean create(Long id, PersonRequest personRequest, UserDetails userDetails);
-
   boolean update(Long id, PersonRequest personRequest, UserDetails userDetails);
 
-  boolean delete(Long id, UserDetails userDetails);
+  boolean delete(Long id);
 
   PageResponse findPersons(FilterParams filterParameters, Integer pageNumber);
 

@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,15 +32,10 @@ public class UserController {
     return userService.authenticate(loginRequest);
   }
 
-  @PostMapping("/register")
-  public Boolean register(@Valid @RequestBody RegisterRequest registerRequest) {
+  @PreAuthorize("hasAuthority('ADMIN')")
+  @PostMapping("/user")
+  public Long register(@Valid @RequestBody RegisterRequest registerRequest) {
     return userService.register(registerRequest);
-  }
-
-  @GetMapping("/activate/{token}")
-  @ResponseStatus(HttpStatus.OK)
-  public void activate(@PathVariable("token") String token) {
-    userService.activate(token);
   }
 
   @PostMapping("/forgot")

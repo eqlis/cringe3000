@@ -40,14 +40,13 @@ public class RegisterRequest {
   @Pattern(regexp = PASSWORD_VALIDATION, message = PATTERN)
   private final String password;
 
-  private final Role role;
-
   public User toUser() {
     User user = new User();
     user.setEmail(email);
     user.setUsername(username);
     user.setPassword(password);
-    user.setRole(role);
+    user.setRole(Role.USER);
+    user.setEnabled(true);
     return user;
   }
 
