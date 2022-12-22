@@ -1,20 +1,13 @@
 package com.cringe.cringe3000.model.dto;
 
-import com.cringe.cringe3000.model.entity.Jwt;
+import com.cringe.cringe3000.model.entity.Person;
 import com.cringe.cringe3000.model.entity.User;
-import com.cringe.cringe3000.model.entity.VerificationToken;
 import com.cringe.cringe3000.model.enums.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.cringe.cringe3000.util.Constants.MAX;
-import static com.cringe.cringe3000.util.Constants.REQUIRED;
+import java.nio.charset.StandardCharsets;
 
 @Getter
 @AllArgsConstructor
@@ -29,9 +22,21 @@ public class UserDTO {
 
     private final Role role;
 
+    private final String name;
 
-    public static UserDTO from(User u){
-        return new UserDTO(u.getId(), u.getEmail(), u.getUsername(), u.getRole());
+    private final String photo;
+
+    public static UserDTO from(User u) {
+        Person p = u.getPerson();
+        return new UserDTO(
+          u.getId(),
+          u.getEmail(),
+          u.getUsername(),
+          u.getRole(),
+          p.getSurname() + " " + p.getFirstName() + " " + p.getLastName(),
+          new String(
+            p.getPhotos().stream().filter(ph -> ph.getIndex().equals(p.getSelectedPhoto())).findFirst().get().getPhoto(),
+            StandardCharsets.UTF_8));
     }
 
 }
