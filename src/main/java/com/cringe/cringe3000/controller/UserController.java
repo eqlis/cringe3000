@@ -4,6 +4,7 @@ import com.cringe.cringe3000.model.dto.AuthResponse;
 import com.cringe.cringe3000.model.dto.ChangePasswordRequest;
 import com.cringe.cringe3000.model.dto.LoginRequest;
 import com.cringe.cringe3000.model.dto.RegisterRequest;
+import com.cringe.cringe3000.model.dto.UserDTO;
 import com.cringe.cringe3000.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -66,6 +67,11 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   public void logout(@AuthenticationPrincipal UserDetails userDetails) {
     userService.logout(userDetails);
+  }
+
+  @PostMapping("/refresh")
+  public UserDTO findByToken(@PathVariable("token") String token) {
+    return userService.refresh(token);
   }
 
 }

@@ -1,12 +1,17 @@
 package com.cringe.cringe3000.model.entity;
 
 import com.cringe.cringe3000.model.enums.Gender;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,6 +30,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+@TypeDefs({@TypeDef(name = "string-array", typeClass = StringArrayType.class)})
 @Entity
 @Getter
 @Setter
@@ -61,7 +67,9 @@ public class Person {
 
   private Integer selectedPhoto;
 
-  private String interests;
+  @Type(type = "string-array")
+  @Column(name = "interests", columnDefinition = "varchar(255) []")
+  private String[] interests;
 
   private String publications;
 

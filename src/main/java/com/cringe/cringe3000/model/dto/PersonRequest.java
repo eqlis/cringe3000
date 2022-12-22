@@ -62,7 +62,7 @@ public class PersonRequest {
 
   private final Gender gender;
 
-  private final String interests;
+  private final String[] interests;
 
   private final String publications;
 

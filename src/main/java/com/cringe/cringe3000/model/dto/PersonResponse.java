@@ -61,7 +61,7 @@ public class PersonResponse {
 
   private final Gender gender;
 
-  private final String interests;
+  private final String[] interests;
 
   private final String publications;
 

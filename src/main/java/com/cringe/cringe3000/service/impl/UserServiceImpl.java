@@ -149,6 +149,12 @@ public class UserServiceImpl implements UserService {
     userRepository.save(user);
   }
 
+  @Override
+  public UserDTO refresh(String token) {
+    String username = jwtUtils.getUserNameFromJwtToken(token);
+    return userRepository.findByEmailOrUsername(username).map(UserDTO::from).orElseThrow(EntityNotFoundException::new);
+  }
+
   private String generatePassword() {
     PasswordGenerator generator = new PasswordGenerator();
 

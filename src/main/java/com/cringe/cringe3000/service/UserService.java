@@ -4,6 +4,7 @@ import com.cringe.cringe3000.model.dto.AuthResponse;
 import com.cringe.cringe3000.model.dto.ChangePasswordRequest;
 import com.cringe.cringe3000.model.dto.LoginRequest;
 import com.cringe.cringe3000.model.dto.RegisterRequest;
+import com.cringe.cringe3000.model.dto.UserDTO;
 import com.cringe.cringe3000.model.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,5 +31,7 @@ public interface UserService {
   void resetPassword(Long id, UserDetails userDetails);
 
   void logout(UserDetails userDetails);
+
+  UserDTO refresh(String token);
 
 }
