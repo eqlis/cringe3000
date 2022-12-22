@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -70,7 +69,7 @@ public class PersonResponse {
 
   private final List<SubjectDTO> subjects;
 
-  private final String photo;
+  private final PhotoInfo photoInfo;
 
   public static PersonResponse from(Person p) {
     return new PersonResponse(
@@ -88,7 +87,7 @@ public class PersonResponse {
         p.getPublications(),
         p.getDegree() == null ? null : DegreeDTO.from(p.getDegree()),
         p.getSubjects() == null ? null : p.getSubjects().stream().map(SubjectDTO::from).toList(),
-        p.getPhoto() == null ? null : new String(p.getPhoto(), StandardCharsets.UTF_8));
+        new PhotoInfo(p.getSelectedPhoto(), p.getPhotosSize()));
   }
 
 }

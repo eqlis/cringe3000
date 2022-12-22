@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 import static com.cringe.cringe3000.util.Constants.DATE_FORMAT;
@@ -16,7 +15,7 @@ import static com.cringe.cringe3000.util.Constants.DATE_FORMAT;
 public class PersonBase {
     private final Long id;
 
-    private final String photo;
+    private final PhotoInfo photoInfo;
 
     private final String lastName;
 
@@ -34,7 +33,7 @@ public class PersonBase {
     public static PersonBase from(Person p){
         return new PersonBase(
                 p.getId(),
-                p.getPhoto()== null ? null : new String(p.getPhoto(), StandardCharsets.UTF_8),
+                new PhotoInfo(p.getSelectedPhoto(), p.getPhotosSize()),
                 p.getLastName(),
                 p.getFirstName(),
                 p.getSurname(),

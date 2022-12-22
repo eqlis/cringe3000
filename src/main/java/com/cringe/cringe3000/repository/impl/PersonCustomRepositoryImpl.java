@@ -2,6 +2,7 @@ package com.cringe.cringe3000.repository.impl;
 
 import com.cringe.cringe3000.model.dto.FilterParams;
 import com.cringe.cringe3000.model.dto.PersonBase;
+import com.cringe.cringe3000.model.dto.PhotoInfo;
 import com.cringe.cringe3000.model.enums.Gender;
 import com.cringe.cringe3000.repository.PersonCustomRepository;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -77,12 +77,11 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository {
     orderByLimitOffset += " limit " + pageable.getPageSize();
     orderByLimitOffset += " offset " + pageable.getPageNumber() * pageable.getPageSize();
 
-    System.out.println(selectWhereGroupBy + orderByLimitOffset);
-
     List<PersonBase> results = jdbcTemplate.query(selectWhereGroupBy + orderByLimitOffset, (rs, i) ->
       new PersonBase(
         rs.getLong("id"),
-        rs.getBytes("photo") == null ? null : new String(rs.getBytes("photo"), StandardCharsets.UTF_8),
+        new PhotoInfo(rs.getInt("selected_photo"),
+          jdbcTemplate.queryForObject("select count(*) from photo where person_id = " + rs.getLong("id"), Integer.class)),
         rs.getString("last_name"),
         rs.getString("first_name"),
         rs.getString("surname"),
