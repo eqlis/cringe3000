@@ -73,6 +73,8 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository {
           }
         }
       }
+    } else {
+      selectWhereGroupBy += " group by p.id";
     }
     orderByLimitOffset += " limit " + pageable.getPageSize();
     orderByLimitOffset += " offset " + pageable.getPageNumber() * pageable.getPageSize();
@@ -80,7 +82,7 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository {
     List<PersonBase> results = jdbcTemplate.query(selectWhereGroupBy + orderByLimitOffset, (rs, i) ->
       new PersonBase(
         rs.getLong("id"),
-        new PhotoInfo(rs.getInt("selected_photo"),
+        new PhotoInfo(rs.getInt("selected_photo") == 0 ? null : rs.getInt("selected_photo"),
           jdbcTemplate.queryForObject("select count(*) from photo where person_id = " + rs.getLong("id"), Integer.class)),
         rs.getString("last_name"),
         rs.getString("first_name"),

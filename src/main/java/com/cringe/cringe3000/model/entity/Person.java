@@ -111,6 +111,9 @@ public class Person {
     } else if (selectedPhoto > index) {
       selectedPhoto -= 1;
     }
+    if (selectedPhoto.equals(0)) {
+      selectedPhoto = null;
+    }
   }
 
 }
